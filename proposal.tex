@@ -38,16 +38,24 @@ Evaluation results suggested that caching intermediate results can save at most
 However, there are still several unresolved issues in caching intermediate
 computation results in current data center network.  First, a centralized cache
 server, as proposed by Nectar, may become a hot spot when computing
-significantly relies on cached intermediate results.  Therefore, a distributed
-cache system appears to be a more potential solution.  Second, when several
+significantly relies on cached intermediate results.  Second, when several
 computing servers need to re-use the same cached intermediate result, they have
 to fetch the cached data individually from the cache server.  Such a data
 communication mode may work in some small-volume data-exchanging and highly
-distributed system (e.g. DNS), but may become inefficient in data center
-network where data exchanged are much more bigger and computing servers are
-relatively close to each other in terms of network topology.  
+distributed system (e.g. DNS), but may become inefficient in data center network
+where data exchanged are much more bigger and computing servers are relatively
+close to each other in terms of network topology.
 
-NDN 
+Named-Data Network \cite{jacobson2009networking}, a novel network architecture
+which can cache data inside networks instead of servers, appears to be a
+potential solution to the problems mentioned above.  In NDN, data are named and
+fetch by their names, rather than through a end-to-end connection between a
+requester and a data provider.  With a specific name, a data packet can be
+cached along the path (more specifically speaking, NDN routers) it has traveled
+through.  When some other requesters ask for the same data, the request can be
+satisfied by data cached in NDN routers without reaching the corresponding data
+provider.  In this way, NDN intrinsically provides a distributed caching
+service, and avoids end-to-end connections. 
 
 
 \section{Problem Statement}
