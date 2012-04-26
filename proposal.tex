@@ -57,8 +57,25 @@ satisfied by data cached in NDN routers without reaching the corresponding data
 provider.  In this way, NDN intrinsically provides a distributed caching
 service, and avoids end-to-end connections. 
 
+Although NDN has many attractive features, it is not very feasible to provide
+intermediate computation results caching service in NDN.  There are two open
+questions: 1) how to name intermediate computation results to maximize the
+caching efficiency? and 2) what is the best network topology for NDN-based data
+center network?  These two issues will be discussed in detail in Section
+\ref{sec:problem_statement}.
 
-\section{Problem Statement}
+In this project, we plan to answer the two questions above by building a
+prototype of NDN-based data center network.  In order to evaluate the
+performance of the prototype, we will provide two specific applications
+supported by the prototype: 1) simple sql query in a distributed database and 2)
+distributed word occurance analysis.  As we will explain in Section
+\ref{sec:problem_statement}, each application represents a different type of
+distributed data computing: incremental computing and sub-computing respectively.
+We will also compare the performance of our prototype with existing IP-based
+solution, Nectar, and try to get some general conclusions which can be used for
+future data center network design.
+
+\section{Problem Statement}\label{sec:problem_statement}
 Use caching in data center.
 \subsection{Naming Intermediate Result}
 \subsection{Network Topology}
