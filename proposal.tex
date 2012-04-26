@@ -68,7 +68,7 @@ In this project, we plan to answer the two questions above by building a
 prototype of NDN-based data center network.  In order to evaluate the
 performance of the prototype, we will provide two specific applications
 supported by the prototype: 1) simple SQL query in a distributed database and 2)
-distributed word occurance analysis.  As we will explain in Section
+distributed word occurance analysis.  As we will describe in Section
 \ref{sec:problem_statement}, each application represents a different type of
 distributed data computing: incremental computing and sub-computing
 respectively.  We will also compare the performance of our prototype with the
@@ -76,8 +76,41 @@ existing IP-based solution, Nectar, and try to derive some general conclusions
 which can be used for future data center network designs.
 
 \section{Problem Statement}\label{sec:problem_statement}
-Use caching in data center.
-\subsection{Naming Intermediate Result}
+To make the problem discussion more clear, we first describe two applications
+that will be implemented over our prototype. And then two related issues will be
+discussed in detail.
+
+The first application is a simple SQL query in a distributed database.  In this
+database, data are stored on multiple servers in a distributed way, and queries
+are processed in a MapReduce style.  When a query is issued, related entries
+will be grouped by mapers, and then further processed by reducers.  When new
+entries have been injected into the database, all related entries have to be
+re-grouped if intermediate results caching is not used.  When the grouped
+entries can be cached as intermediate results, mapers only need to group
+recently injected entries which can be combined with cached results for reducer
+to process.  Such a computing mode is called as incremental computing.  
+
+The second application is a distributed word occurance analysis.  Unlike the
+previous application, data set is persistent in this application.  In order to
+get the final results, the computation can be divided into several steps.  Some
+steps may require the computation results of some other steps.  And the same
+computation results may be re-used by more than one computing servers.  Such a
+computing mode is called as sub-computing.
+
+\subsection{Name Intermediate Results}
+We use the first application to discuss the naming issue in NDN-based network.
+In traditional IP network, a maper will transfer data to a reducer, while in
+NDN, a reducer is notified a task, and then fetches data needed for the task.
+The reducer issues an {\sc Interest} message which contains the name of
+requested data.  The name should be able to represent the timeliness of the
+task.  For example, if a reducer needs all the grouped entries before a
+timestamp $t_i$, and there are several pieces of entries injected at timestamps
+$t_{i-3}$, $t_{i-2}$, $t_{i-1}$ before $t_i$, then all intermediate grouped
+entries, if cached, should be able to be matched with a name containing the
+timestamp $t_i$.  However, the sequential nature of timestamp conflicts with the
+hierarchical structure of NDN's naming mechanism which determines caching
+efficiency to a large extent. Therefore, we have to find a compatible naming
+mechanism for incremental computing.
 \subsection{Network Topology}
 \subsection{Comparison With IP-based Solution}
 \section{Related Work}
