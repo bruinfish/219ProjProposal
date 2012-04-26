@@ -9,7 +9,7 @@
 
 \author{Zhiyang Wang,
         Cheng-Kang Hsieh,
-        Yingdi Yu}
+        and Yingdi Yu}
 
 \maketitle
 
@@ -26,10 +26,29 @@ Data Center Network, NDN, Distributed Computation
 
 
 \section{Introduction}
-\IEEEPARstart{D}{ata}-intensive distributed computing has been a major
-challenge in data centers.  Without well-managed data and computation, a large
-portion of computations in a data center have to be unnecessarily repeated.
-Pradeep, {\it et al.} proposed Nectar, a system that can  
+\IEEEPARstart{D}{ata}-intensive distributed computing has been a major challenge
+in data centers for a long time.  Without well-managed data and computation, a
+large portion of computations in a data center have to be unnecessarily
+repeated.  In order to avoid redundant computation, Pradeep, {\it et al.}
+proposed Nectar \cite{gunda2010nectar}, a system in which intermediate computation
+results can be cached so that they can be reused by following computation.
+Evaluation results suggested that caching intermediate results can save at most
+99\% redundant computations in some cases \cite{gunda2010nectar}.
+
+However, there are still several unresolved issues in caching intermediate
+computation results in current data center network.  First, a centralized cache
+server, as proposed by Nectar, may become a hot spot when computing
+significantly relies on cached intermediate results.  Therefore, a distributed
+cache system appears to be a more potential solution.  Second, when several
+computing servers need to re-use the same cached intermediate result, they have
+to fetch the cached data individually from the cache server.  Such a data
+communication mode may work in some small-volume data-exchanging and highly
+distributed system (e.g. DNS), but may become inefficient in data center
+network where data exchanged are much more bigger and computing servers are
+relatively close to each other in terms of network topology.  
+
+NDN 
+
 
 \section{Problem Statement}
 Use caching in data center.
@@ -39,10 +58,13 @@ Use caching in data center.
 \section{Related Work}
 \section{Timeline}
 
-\begin{thebibliography}{1}
-\bibitem{2010OSDIGunda}
-Nectar
-\end{thebibliography}
+\bibliographystyle{abbrv}
+\bibliography{proposal}
+
+%\begin{thebibliography}{1}
+%\bibitem{2010osdiGunda}
+%Nectar
+%\end{thebibliography}
 \end{document}
 
 
