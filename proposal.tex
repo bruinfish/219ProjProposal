@@ -13,15 +13,15 @@
 
 \maketitle
 
-\begin{abstract}
-The abstract goes here.
-\end{abstract}
+%\begin{abstract}
+%The abstract goes here.
+%\end{abstract}
 
-\begin{IEEEkeywords}
-Data Center Network, NDN, Distributed Computation
-\end{IEEEkeywords}
+%\begin{IEEEkeywords}
+%Data Center Network, NDN, Distributed Computation
+%\end{IEEEkeywords}
 
-\IEEEpeerreviewmaketitle
+%\IEEEpeerreviewmaketitle
 
 
 
@@ -154,8 +154,8 @@ master’s task toward decentralized routers.
 \subsection{Related Work}
 In data center related work under traditional IP network, there are 
 quite a few existing work focusing on reducing redundant computations 
-via caching, like DryadInc [1], Coment [2], the stateful bulk 
-processing system [3] and Nectar [4]. And among them we choose Nectar 
+via caching, like DryadInc \cite{Isard:2007:DDD:1272996.1273005}, Coment \cite{He:2010:CBS:1807128.1807139}, the stateful bulk 
+processing system \cite{Logothetis:2010:SBP:1807128.1807138} and Nectar \cite{gunda2010nectar}. And among them we choose Nectar 
 as our main reference and comparison target since it attempts to 
 provide a more comprehensive solution to the problem of automatic 
 management of data and computation in data center. In order to make 
@@ -169,7 +169,7 @@ In NDN network, or even content centric network as a wider scope,
 currently no existing working published aiming at such solution for 
 data center network scenario. The most related work, if we just 
 consider the appearance data center network scenario in CCN related 
-research, is in [5] where the author use data center as one CCN use 
+research, is in \cite{lee2010greening} where the author use data center as one CCN use 
 case to illustrate the energy saving performance of CCN. Obviously, 
 from the motivation to the evaluation, our work is totally different 
 from their work. 
@@ -195,21 +195,21 @@ that our work could have quite much contribution if the solution could
 be enough promising, even if NDN lost the bigger campaign. 
 About content centric network naming, which is one of the key issues 
 we want to address under the scenario, there’s quite a few related 
-works talking about the structures and rules of naming, such as [6] or 
-[7], but their main motivation is for security or scalability under 
+works talking about the structures and rules of naming, such as \cite{ghodsi2011naming} or 
+\cite{primes}, but their main motivation is for security or scalability under 
 the scenario of the whole internet, which is very different with 
 ours. 
 There are also some existing studies on CCN caching. For example, in 
-[8], the author developed an analytical model for the performance 
+\cite{carofiglio2011modeling}, the author developed an analytical model for the performance 
 evaluation of content transfer in CCN that allows explicit 
 characterization of steady state dynamics. Our work could draw 
 inspiration from this work in the network topology design part and 
 therefore design a better topology and caching strategy. 
 
 \section{Timeline}
-Week 4-6: Paper review and system & algorithm design 
-Week 7:  System & algorithm formulation 
-Week 8: Experiments design, System & algorithm implementation and 
+Week 4-6: Paper review and system \& algorithm design 
+Week 7:  System \& algorithm formulation 
+Week 8: Experiments design, System \& algorithm implementation and 
 evaluation 
 Week 9: Final presentation and report preparation 
 
