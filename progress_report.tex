@@ -48,21 +48,79 @@ Figure \ref{fig:non-seq-eg}.
 
 \subsubsection{Identify Intermediate Results}
 Although steps do not have to be sequential, intermediate results in our design
-are always identified as a sequential operations (e.g. $op_1$, $op_2$, ..., $op_N$) on a
+are always identified as a sequential operations (e.g., $op_1$, $op_2$, ..., $op_N$) on a
 set of input data.  The intermediate results can be named as following:
 \begin{center}
 /$op_N$/.../$op_2$/$op_1$/$<$InputDataName$>$
 \end{center}
 For example, in the example shown in Figure \ref{fig:seq-eg}, the intermediate
 result after operation {\it B} can be identified using name: /$op_B$/$op_A$/$
-Data_{input}$.  We can also generalize such a naming mechanism by including
-final output results.  If the whole computation program is decomposed in a
-sequential way as shown in Figure \ref{fig:seq-eg}, the final output result can
-be identified as /$op_C$/$op_B$/$op_A$/$Data_{input}$.  For an unsequential
-decomposition, the final output result can be idenitified by several names.  For
-instance, in Figure \ref{fig:non-seq-eg}, the final results can be expressed as:
+Data_{input}$.  This name can be interpreted as ``it is the output result of
+performing operation {\it A} on input data $Data_{input}$, and performing
+operation {\it B} on the result of operation {\it A}''.  We can also generalize
+such a naming mechanism by including final output results.  If the whole
+computation program is decomposed in a sequential way as shown in Figure
+\ref{fig:seq-eg}, the final output result can be identified as
+/$op_C$/$op_B$/$op_A$/$Data_{input}$.  For an unsequential decomposition, the
+final output result can be idenitified by several names.  For instance, in
+Figure \ref{fig:non-seq-eg}, the final results can be expressed as:
 /$op_E$/$op_D$/$Data_{input}$ and /$op_F$/$op_D$/$Data_{input}$.
 
 \subsubsection{Compute Without Cache}
+We first describe how NDN-based network supports distributed computing, then
+describe how to enhance the distributed computing by using cached intermediate
+results in next section.  The computation program shown in
+Figure~\ref{fig:seq-eg} is used as an example to illustrate the whole procedure.
+The first step is to deploy the decomposed operations (e.g., {\it A}, {\it B},
+{\it C}) on servers.  As shown in Figure~\ref{fig:cpt-wo-cache}, each operation
+is deployed on one server. However, multiple operations can share one server,
+and one operation can be deployed on multiple servers.  A server $S_B$ with a
+operation deployed should announce a name prefix indicating its capability of
+performing the operation.  For example, if a server announce a prefix
+``/$op_B$'', the server should be able to perform operation {\it B}.  Therefore,
+all {\sc Interest} messages with names sharing the prefix ``/$op_B$'' (e.g.,
+``/$op_B$/$op_A$/\textless$data_{input1}$\textgreater'' and
+``/$op_B$/\textless$data_{input2}$\textgreater'') will be forwarded to the
+server $S_B$.  When $S_B$ receives an {\sc Interest} meassage with ``/$op_B$''
+as the name prefix, it treats the suffix following ``/$op_B$'' (e.g.,
+``/$op_A$/\textless$data_{input1}$\textgreater'' and
+``/\textless$data_{input2}$\textgreater in previous examples) as the name of the
+input data for it to perform operation {\it B}.  If $S_B$ does not have the
+input data for operation {\it B}, it will send another {\sc Interest} message
+using the suffix as the name.  If the suffix involves another operation, for
+example, operation {\it A} in suffix ``$/op_A/$$<data_{input1}>$'', the {\sc
+  Interest} message will be forwarded to a server $S_A$, which annonuces prefix
+``$/op_A$'' (i.e., the server with operation A deployed), and $S_A$ can use an
+{\sc Interest} with the name ``/\textless$data_{input1}$\textgreater'' to fetch
+the initial input data.  In this way, the original {\sc Interest} message (e.g.,
+$/op_B/op_A/$\textless$data_{input1}$\textgreater) can recursively trigger $S_A$
+to perform operation {\it A} and $S_B$ to perform operation {\it B} once upon
+$S_A$ has finished its computation, and the {\sc Data} message which eventually
+satisfies the original {\sc Interest} message should contains the desired final
+output result.
+
+\subsubsection{Utilize Cached Results}
+As {\sc Data} packets can be cached in NDN network, or more specifically
+speaking in NDN routers, incoming {\sc Interest} packets can be satisfied by
+cached {\sc Data} packets, instead of asking data producers (e.g., servers
+deployed with operations in this paper) to generate data again.  Since cached
+data can be matched with the names carried in {\sc Interest} packets, when a NDN
+router receives an {\sc Interest} packet, it will first lookup its local cache.
+If there is a cache hit, then the cached data can be used to satisfy the {\sc
+  Interest}.  Otherwise, it will forward the {\sc Interest} packet to a
+neighbour NDN router which via routing protocol claims that it knows how to
+reach the corresponding data producer (the one announcing a prefix of the name
+in the {\sc Interest} packet).  As {\sc Data} packet always flows back along the
+way {\sc Interest} packet goes, it is still possible that there is a cache hit
+for the {\sc Interest} packet in the neighbour router.  
+
+However, without a careful design, the cache may be still inefficient.  For
+example, a data requester (a server that is about to perform an operation in
+this report) may request an intermediate result which may share the the same
+operation sequence with some other intermediate results computed previously, but
+the input data sets of the previous intermediate results are different from the
+the one the requester needs.  If 
+
+
 \subsection{Refinement}
 \end{document}
