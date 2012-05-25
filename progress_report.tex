@@ -19,9 +19,50 @@ Pre-assumptions.
 \subsubsection{Complexity of Matching}
 \subsubsection{Sub-Optimal Plan}
 \section{NDN-based Solution}
-Simplify expression decomposition (\& flexibility).
-Simplify identifying intermediate results.
-Simplify matching intermediate results.
+We propose an NDN-based solution to utilize intermediate results by caching them
+in NDN routers.  Compared with Nectar, which is IP-based, NDN-based solution
+integrates operations and input data into a name that can be used in matching
+cached data and routing the corresponding request to a producer of output data.
+In this section, we first describe the system architecture, then discuss further
+refinement.
+
+%Simplify expression decomposition (\& flexibility).
+%Simplify identifying intermediate results.
+%Simplify matching intermediate results.
 \subsection{System Architecture}
+\subsubsection{Decompose Computation}
+In Nectar, all computation programs that can be decomposed are required to be
+written in C\#, so that the program can be divided into several operations.
+Programs written in other languages are treated as a single operation.  In our
+design, we do not impose such a language limitation in decomposing a program.
+Instead, we allow users to define operations that can be used to decompose
+computations.  For example, given a computation program {\it P} shown in Figure
+\ref{fig:seq-eg}, it can be divided into three steps {\it A}, {\it B}, {\it C}
+based on its own logic.  Each step can be defined as an operation in our design.
+Such a mechanism can provide users more flexibilities: 1) a program written in
+other languages can still be decomposed; 2) users have full control over the
+decomposition instead of being limited by a low-level decomposer.  We should
+also point out that although the steps in Figure \ref{fig:seq-eg} are
+sequential, a program does not have to be decomposed sequentially, as shown in
+Figure \ref{fig:non-seq-eg}.
+
+\subsubsection{Identify Intermediate Results}
+Although steps do not have to be sequential, intermediate results in our design
+are always identified as a sequential operations (e.g. $op_1$, $op_2$, ..., $op_N$) on a
+set of input data.  The intermediate results can be named as following:
+\begin{center}
+/$op_N$/.../$op_2$/$op_1$/$<$InputDataName$>$
+\end{center}
+For example, in the example shown in Figure \ref{fig:seq-eg}, the intermediate
+result after operation {\it B} can be identified using name: /$op_B$/$op_A$/$
+Data_{input}$.  We can also generalize such a naming mechanism by including
+final output results.  If the whole computation program is decomposed in a
+sequential way as shown in Figure \ref{fig:seq-eg}, the final output result can
+be identified as /$op_C$/$op_B$/$op_A$/$Data_{input}$.  For an unsequential
+decomposition, the final output result can be idenitified by several names.  For
+instance, in Figure \ref{fig:non-seq-eg}, the final results can be expressed as:
+/$op_E$/$op_D$/$Data_{input}$ and /$op_F$/$op_D$/$Data_{input}$.
+
+\subsubsection{Compute Without Cache}
 \subsection{Refinement}
 \end{document}
