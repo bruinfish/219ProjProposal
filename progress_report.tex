@@ -5,9 +5,9 @@
 
 \title{Caching Intermediate Results in NDN-based Data Center Network}
 
-\author{Zhiyang Wang,
+\author{Yingdi Yu,
   Cheng-Kang Hsieh,
-  and Yingdi Yu}
+  and Zhiyang Wang}
 
 \maketitle
 
@@ -240,11 +240,11 @@ name as a generalized way to represent various data sets.  It is more reasonable
 for applications to define their own naming conventions to optimize performance.
 Therefore, in our design we only use the exactly same name to match cached data.
 
-With this assumption, we consider the next problems.  There are two different
-strategies to represent data sets.  The first strategy is to divide data set
-with a unified granularity and represent each unit using a name.  When a data
-requester needs output results of a specific operation sequence over an input
-data set.  It divides the input data set into several units, and send {\sc
+With this assumption, we consider the next two problems.  There are two
+different strategies to represent data sets.  The first strategy is to divide
+data set with a unified granularity and represent each unit using a name.  When
+a data requester needs output results of a specific operation sequence over an
+input data set.  It divides the input data set into several units, and send {\sc
   interest} packets for output results over each data unit.  However, it is
 difficult to define the granularity of a data unit.  A too coarse granularity
 can reduce the caching efficiency, while a too fine granularity can leads to a
@@ -255,7 +255,7 @@ therefore a data set is represented by one name.  Although the scale of packet
 exchanging and cache entries can be significantly reduced, it makes the third
 problem more difficult.  We propose a solution that combines the good features
 of the two strategies and avoid their defects by introducing an extra metadata
-fetching.  
+fetching.
 
 In our solution, before the data requester sends out {\sc interest}
 for intermediate results, it first sends an {\sc interest} with name 
@@ -264,19 +264,19 @@ for intermediate results, it first sends an {\sc interest} with name
 \end{center}
 to collect names of existing intermediate results which is related to the input
 data set.  The returned {\sc data} is called ``metadata'' which consists of a
-name set of intermediates results which is the most cost-saving plan for the
-operation sequence indicated in the name.  The TTL of this {\sc data} packet is
-set to 0, so that it will never be cached in a router.  As a result, all the
-{\sc interest} packets for metadata will be forwarded to the server which is
-responsible for the first component in the {\it operation\_sequence} of the name
-(i.e., the last operation in the sequence of operations).  For example, a
-metadata {\sc interest} ``/$op_C$/$op_B$/$op_A$/{\it DataName}/1-100'' will
-be eventually forwarded to server $S_C$ which is responsible for operation $C$.
-Since server $S_C$ handles all computation of operation $C$, it always knows
-which intermediate data has been computed if $S_C$ keeps a record for it.
-Therefore, given a specific input data range, server $S_C$ can determine a set
-of intermediate results that is most cost-saving, and return their names via the
-metadata {\sc data} packet.  
+name set of intermediate results. This name set indicates the most cost-saving
+plan for the operation sequence indicated in the name.  The TTL of this {\sc
+  data} packet is set to 0, so that it will never be cached in a router.  As a
+result, all the {\sc interest} packets for metadata will be forwarded to the
+server which is responsible for the first component in the {\it
+  operation\_sequence} of the name (i.e., the last operation in the sequence of
+operations).  For example, a metadata {\sc interest}
+``/$op_C$/$op_B$/$op_A$/{\it DataName}/1-100'' will be eventually forwarded to
+server $S_C$ which is responsible for operation $C$.  Since server $S_C$ handles
+all computation of operation $C$, it always knows which intermediate data has
+been computed if $S_C$ keeps a record for it.  Therefore, given a specific input
+data range, server $S_C$ can determine a set of intermediate results that is
+most cost-saving, and return their names via the metadata {\sc data} packet.
 
 Once the data requester gets the name list from the metadata, it can identify
 the gaps between the input data.  These gaps are those subset of input data over
