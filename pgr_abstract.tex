@@ -1,0 +1,14 @@
+\begin{abstract}
+In this report, we propose our design for NDN-based intermediate result caching
+after investigating Nectar, an existing IP-based solutions.  In our NDN-based
+solution, we integrate operations and input data into the data name, and utilize
+the intrinsic network caching feature of NDN to explore the efficiency of
+caching intermediate results in data center network.  Compared to Nectar, our
+design provides applications a simple and flexible way to decompose programs
+into self-defined operations.  Our design delegates management of intermediate
+data to the computation servers which are responsible for the data's last
+operation.  This delegation can provide more flexible and accurate management of
+intermediate results and garbage collection, thus our NDN-based design can keep
+the number of cached entries small, generate more cost-saving plan, and provide
+better storage management.
+\end{abstract}

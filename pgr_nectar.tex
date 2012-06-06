@@ -1,0 +1,81 @@
+\section{Nectar: IP-based Solution}
+(The name of this section is tentative)
+This section
+briefly describe Nectar: a IP-based system designed to manage the intermediate
+results. With Nectar, the intermediate results can be shared across multiple
+programs or be used in the future computation incrementally.  Nectar realizes
+the interchangeability of data and computation by the following two elements:
+\emph{a)} a client-side library that rewrites user programs; \emph{b)} a
+cluster-wide cache server that manages the intermediate results.  Nectar client
+side library takes a \emph{DryadLINQ} program $P$ as input, consulting the
+cache service to rewrite it to an equivalent but more efficient program $P'$ in
+the following steps:
+
+\begin{itemize} 
+
+\item Decompose program $P$ into a set of sub-expressions ${P1, P2, P3 ...}$
+equivalent to $P$ and probe the cache service for all cache hits for each
+\emph{prefix sub-expression} of $P$.
+
+\item Recursively applying the maximum-independent-set algorithm from the
+largest to the shortest prefix sub-expression, finding a subset of intermediate
+results which are disjoint on input data and provide the most saving on
+execution time.
+
+%For each prefix sub-expression, apply the maximum-independent-sets algorithm
+%to find a subset of intermediate results which are disjoint on input data and
+%provide the most saving on execution time.  \item Pick a set of intermediate
+%results of a prefix sub-expressions that can provide the most saving. 
+
+\item Rewrite the program $P$ to $'P$ in a way that the program can benefit
+from the chosen subset of intermediate results. 
+
+\end{itemize}
+
+We found that, although the Nectar realizes the interchangeability of data and
+computation in a way transparent to programmers, its rewrite-based solution
+largely limits the flexibility of the use of intermediate results, and its
+IP-based caching system complicates the identifying and retrieving procedure of
+the intermediate results.  We argue that our NDN-based system can provide a
+more flexible, simple solution.  The following sections describe the problems
+of Nectar.
+
+\subsection{Inflexibility of rewrite-based solution} Nectar rewrites users'
+programs written in \emph{LINQ} into a new program which can benefit from
+intermediate results. Although, such a rewrite-based solution has the advantage
+of transparency, it largely limits the flexibility of caching system in two
+ways: \emph{a)} Nectar only decomposes and considers caching the computations
+it can recognize while failing to cache and benefit from the intermediate
+results belonging to the computations not recognizable to it.  \emph{b)} On the
+other hand, Nectar could wrongly decompose a computation into sub-expressions
+of which intermediate results are not worth to cache, and still try to cache
+them if they are inquired frequently.
+
+To design such a rewrite algorithm could be tricky and error-prone. Any corner
+case the rewriter fails to consider could cause data inconsistency without
+warnings. Meanwhile, such rewrite-based solution might not be applicable to
+other languages used in data centers.
+
+Nectar adopts such a rewrite-based solution while sacrificing the flexibility,
+because they assume it is too much effort for programmers to modify the
+programs. However, we argue that if we can provide a simple enough programing
+model to programmers, who know the programs best, such as with
+\emph{Map-Reduce}, the programmers can best tune the caching of intermediate
+result without too much effort.
+
+\subsection{Complication of identifying and retrieving intermediate results}
+Identifying and retrieving the intermediate results are extremely complicated
+in Nectar.  Each entry of intermediate results is indexed by the fingerprint of
+the sub-expression that have generated it, as well as, the fingerprint pairs of
+the first and last extents of the input dataset. 
+
+To identify the intermediate results, the rewriter has to compute the
+fingerprints of each prefix sub-expression, querying the cache service,
+recursively searching the best-saving subset of intermediate results, and
+rewriting the program. Then, the program retrieve the chosen subset of
+intermediate results from the specific location on a distributed storage given
+by the cache service.
+
+We found this procedure of identifying and retrieving the intermediate results
+can be largely simplified in a NDN-based network with a naming technique we
+will describe later.

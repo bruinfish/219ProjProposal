@@ -1,0 +1,50 @@
+\section{Refinement}
+We discuss three refinements for our proposed design.
+\subsection{Merge Intermediate Results}\label{sec:merge}
+As described in Section \ref{sec:utilize_cache}, computation servers maintain a list
+of intermediate results they have computed.  Therefore, a computation server is
+able to merge these intermediate results by merging their names.  A data
+requester can send an {\sc interest} with the merged name, whose {\sc data}
+packet has not been cached.  The {\sc interest} will eventually reach the
+computation server, who can fetch these unmerged intermediate results from cache
+and combine them into a merged intermediate results.  If some parts of
+intermediate results have no longer existed in cache, the computation server can
+re-compute them.  Once a merged name replace unmerged ones, these unmerged
+intermediate results will never be requested any more, and they will be ejected
+from cache when their TTL expires or their spaces must be cleaned to cache new
+data.  By merging intermediate results, we can always keep cache entries at a
+small scale.
+\subsection{Robustness \& Load Balance} \label{sec:robust}
+An computation server will become an single point failure if it is the only one
+server assigned for one operation.  Besides this, if the operation is
+computation-intensive or very popular among applications, the computation server
+will be overloaded easily.  Therefore, it is desired to assign multiple
+computation servers for one operation.  To achieve that, all computation servers
+should announce the same prefix for the operation they are assigned.  
+
+Given an {\sc interest}, which computation server will receive the {\sc
+  interest} is up to NDN routers' decision.  As a result, a computation server
+may not know the computation results of another computation server performing
+the same operation.  This would affect the correctness of metadata fetching
+described in Section \ref{sec:utilize_cache}.  To avoid this problem, we use
+SYNC, a NDN communication protocol which can synchronize name sets of
+multi-parties, to synchronize name sets of intermediate results of different
+computation server for one operation. 
+\subsection{Garbage Collection} \label{sec:gg}
+It is very important for our NDN-based solution to remove useless intermediate
+results from cache while keeping the most popular intermediate results in cache,
+in order to save storage resources and increase effectiveness of cache.  In NDN,
+the maximum time for a {\sc data} packet to stay in cache is determined before
+it is sent out from its producer, and will not change in the network.  While it
+is easy to let useless {\sc data} get expired in NDN network, it is difficult to
+make a popular {\sc data} stay in the cache of NDN routers.  Therefore, in order
+to avoid re-computation, a computation server can store its popular intermediate
+results locally in case they get expired in NDN routers.  The popularity of an
+intermediate result can be evaluated based on the statistics of metadata query
+described in Section \ref{sec:utilize_cache}.
+
+Storage resources of computation servers are also limited. For those long-term
+popular intermediate results, especially those merged huge-bulk of intermediate
+results, it is not feasible to store them at computation servers.  Therefore, we
+use Repo, a NDN storage technique which provides persistent storage, to store
+this data.
