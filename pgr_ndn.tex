@@ -123,7 +123,13 @@ For intermediate results that have not been computed yet, or expired in the cach
 The generator can repeat previous procedure to query the most cost-saving plan for its own input intermediate results.
 
 There are three more benefits of asking computation servers for name list.  
-First, intermediate results do not have to be in the same granularity.  
+First, we can achieve adjustable granularity of intermediate results. 
+Since requester is always informed which names should be used to fetch intermediate results, requesters and computation servers do not have to reach an agreement on the granulairty of intermediate results.
+Computation servers have full control of the granularity of intermediate results, and receive all initial requests for intermediate results computation. 
+Computation servers can determine which granularity is the best for cost savings. 
+And the decision of computation server can be eventually reflected back to requesters through metadata {\sc Data}.
 Second, computation servers can keep statistics for intermediate results, thus telling which one should be cached for a long time, and which one is no longer needed. 
-This information is very useful for garbage collection as we will discuss in Section \ref{sec:gg}.
-Third, computation server can merge intermediate results as necessary. We will discuss intermediate results merging in Section \ref{sec:merge}.
+This information is very useful for storage management as we will discuss in Section \ref{sec:gg}.
+Third, computation server can merge some intermediate results into a larger one if necessary while keeping others in small granularity.
+So the number of intermediate results can be shrinked, which does not only simplify storage management, but also save the communication overhead by reducing the number of messages exchanged for data fetching.
+We will discuss intermediate results merging in Section \ref{sec:merge}.
