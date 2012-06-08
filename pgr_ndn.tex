@@ -4,11 +4,9 @@ Compared with IP-based Nectar, NDN-based solution integrates operations and inpu
 We first describe the system architecture in this section, and discuss further refinement in next section.
 
 \subsection{Decompose Computation}
-We observe that definition of intermediate results is the key 
-In our design, we do not impose such a language limitation in decomposing a program.
-Instead, we allow users to define 
-
-their own operations for decomposition.  
+We observe that definition of intermediate results is the key to utlize intermediate results.
+With this observation, we do not impose a language limitation in decomposing a program.
+Instead, we allow users to define their own operations for decomposition, and use these operations.  
 For example, given a computation program {\it P} shown in Figure \ref{fig:seq-eg}, it can be divided into three steps {\it A}, {\it B}, {\it C} based on its own logic.  
 Each step can be defined as an operation in our design.  
 Such a mechanism can provide users more flexibilities: 
@@ -103,18 +101,22 @@ We propose a solution that combines the good features of the two strategies and 
 
 In our solution, before the data requester sends out {\sc interest} for intermediate results, it first sends an {\sc interest} with name 
 \begin{center}
-/\textless{\it operation\_sequence}\textgreater/{\it DataNames}/\textless{\it input\_range}\textgreater
+/\textless{\it operation\_sequence}\textgreater/{\it DataNameSet}/\textless{\it input\_range}\textgreater
 \end{center}
 to collect names of existing intermediate results which is related to the input data set.  
 The returned {\sc data} is called ``metadata'' which consists of a name set of intermediate results. 
-This name set indicates the most cost-saving plan for the operation sequence indicated in the name.  
-The TTL of this {\sc data} packet is set to 0, so that it will never be cached in a router.  
+Each name in the name set has its own input data range.
+The data ranges of all names in the name set construct a partition of the original input data range.
+Some names in the set refer to intermediate results that have already been computed, while the others have not been computed yet.
+Although which existing intermediate results should be used to make a partition is determined by computation server,
+such a partition should indicate the most cost-saving plan for the operation sequence indicated in the name.  
+The TTL of this metadata {\sc data} packet is set to 0, so that it will never be cached in a router.  
 As a result, all the {\sc interest} packets for metadata will be forwarded to the server which is responsible for the first component in the {\it operation\_sequence} of the name (i.e., the last operation in the sequence of operations).  
-For example, a metadata {\sc interest} ``/$op_C$/$op_B$/$op_A$/{\it DataName}/1-100'' will be eventually forwarded to server $S_C$ which is responsible for operation $C$.  
+For example, a metadata {\sc interest} ``/$op_C$/$op_B$/$op_A$/{\it DataNameSet}/1-100'' will be eventually forwarded to server $S_C$ which is responsible for operation $C$.  
 Since server $S_C$ handles all computation of operation $C$, it always knows which intermediate data has been computed if $S_C$ keeps a record for it.  
 Therefore, given a specific input data range, server $S_C$ can determine a set of intermediate results that is most cost-saving, and return their names via the metadata {\sc data} packet.
 
-Once the data requester gets the name list from the metadata, it can identify the gaps between the input data.  
+Once the data requester gets the name list from the metadata, it simply uses these names to fetch intermediate results.
 These gaps are those subset of input data over which the operation sequence has not been applied.  
 The data requester can automatically generate new names for these intermediate result which can fill these gaps. 
 For example, if a data requester get names: ``/$op_C$/$op_B$/$op_A$/{\it DataName}/1-30'' and ``/$op_C$/$op_B$/$op_A$/{\it DataName}/41-100'', it can generate a name ``/$op_C$/$op_B$/$op_A$/{\it DataName}/31-40'' for the intermediate result which has not be computed before.  
