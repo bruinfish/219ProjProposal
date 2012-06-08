@@ -24,9 +24,9 @@ solution imposes many unnecessary constraints to the uses of intermediate result
 First, in order for rewriter to rewrite the programs, the
 programs must be written in the certain language that is
 understandable to the rewriter. In fact, Nectar can only support the programs that were
-written in the C# while many programs ran in data centers do not
-adopt C# or Microsoft's DryadLINQ. Also, as mentioned in the Nectar's paper,
-even if a program is written in the C#, if it invokes any external library written in
+written in the C\# while many programs ran in data centers do not
+adopt C\# or Microsoft's DryadLINQ. Also, as mentioned in the Nectar's paper,
+even if a program is written in the C\#, if it invokes any external library written in
 other languages, these parts of computations cannot benefit
 from the intermediate results because rewriter cannot understand them. 
 
