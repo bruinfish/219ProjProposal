@@ -113,15 +113,14 @@ such a partition should indicate the most cost-saving plan for the operation seq
 The TTL of this metadata {\sc data} packet is set to 0, so that it will never be cached in a router.  
 As a result, all the {\sc interest} packets for metadata will be forwarded to the server which is responsible for the first component in the {\it operation\_sequence} of the name (i.e., the last operation in the sequence of operations).  
 For example, a metadata {\sc interest} ``/$op_C$/$op_B$/$op_A$/{\it DataNameSet}/1-100'' will be eventually forwarded to server $S_C$ which is responsible for operation $C$.  
+And it will be divided by the computation server $S_C$ according to its previous computation results and its computation policy into three pieces: ``/$op_C$/$op_B$/$op_A$/1-30'', ``/$op_C$/$op_B$/$op_A$/31-40'' and ``/$op_C$/$op_B$/$op_A$/41-100''. 
 Since server $S_C$ handles all computation of operation $C$, it always knows which intermediate data has been computed if $S_C$ keeps a record for it.  
 Therefore, given a specific input data range, server $S_C$ can determine a set of intermediate results that is most cost-saving, and return their names via the metadata {\sc data} packet.
 
 Once the data requester gets the name list from the metadata, it simply uses these names to fetch intermediate results.
-These gaps are those subset of input data over which the operation sequence has not been applied.  
-The data requester can automatically generate new names for these intermediate result which can fill these gaps. 
-For example, if a data requester get names: ``/$op_C$/$op_B$/$op_A$/{\it DataName}/1-30'' and ``/$op_C$/$op_B$/$op_A$/{\it DataName}/41-100'', it can generate a name ``/$op_C$/$op_B$/$op_A$/{\it DataName}/31-40'' for the intermediate result which has not be computed before.  
-Then it can use the two names from metadata to fetch intermediate results from the cache of NDN routers, and use the new names it generates to trigger related computation servers (e.g., $S_C$, or even $S_B$, $S_A$) to generate new intermediate results to fill the gap.  
-Eventually, all the required intermediate results can be obtained, and the data requester can perform its own operation based on them or terminate the computation if they are already the final output results.
+For intermediate results that have been computed before and exist in the cache of NDN routers, the {\sc interest} messages with their names can be automatically satisfied by the cached content.
+For intermediate results that have not been computed yet, or expired in the cache of NDN routers, the {\sc interest} messages will experience a serial of cache misses, but will eventually arrive the holder of the intermediate results (e.g., computation servers, or Repo), or the generator of the intermediate results (e.g., computation servers). 
+The generator can repeat previous procedure to query the most cost-saving plan for its own input intermediate results.
 
 There are three more benefits of asking computation servers for name list.  
 First, intermediate results do not have to be in the same granularity.  
