@@ -1,2 +1,58 @@
 \section{Introduction}
+\IEEEPARstart{D}{ata}-intensive distributed computing has been a major challenge
+in data centers for a long time.  Without well-managed data and computation, a
+large portion of computations in a data center have to be unnecessarily
+repeated.  In order to avoid redundant computation, Pradeep, {\it et al.}
+proposed Nectar \cite{gunda2010nectar}, a system in which intermediate computation
+results can be cached so that they can be reused by following computation.
+Evaluation results suggested that caching intermediate results can save at most
+99\% redundant computations in some cases \cite{gunda2010nectar}.
 
+However, there are still several unresolved issues in caching intermediate
+computation results in current data center network.  1) Complexity. Nectar adopt a client-side rewriter and a centralized cache service to hardwire the programs and intermediate results, which is extrmely complicated and not applicaple in general data centers. 2) Language flexibility. Nectar's rewrite-based solution is inflexible in different probleming languages and only support C#. 
+Data centers need a morea more flexible design, so that such a idea of using intermediate can be widely applicable, and different programs written in the different
+languages can all benefit from the intermediate results. 3) Low intermediate result utlization. Nectar rewites the program at the compiler level, which fail to fully utilize the benefit of intermediate results.
+
+Named-Data Network \cite{jacobson2009networking}, a novel network architecture
+which can cache data inside networks instead of servers, appears to be a
+potential solution to the problems mentioned above.  In NDN, data are named and
+fetch by their names, rather than through a end-to-end connection between a
+requester and a data provider.  With a specific name, a data packet can be
+cached along the path (more specifically speaking, NDN routers) it has traveled
+through.  When some other requesters ask for the same data, the request can be
+satisfied by data cached in NDN routers without reaching the corresponding data
+provider.  In this way, NDN intrinsically provides a distributed caching
+service, and avoids end-to-end connections. 
+
+Although NDN has many attractive features, it is not very feasible to provide
+intermediate computation results caching service in NDN.  There are two open
+questions: 1) how to name intermediate computation results to maximize the
+caching efficiency and 2) what is the best network topology for NDN-based data
+center network.  These two issues will be discussed in detail in Section
+\ref{sec:problem_statement}.
+
+In this project, we plan to answer the two questions above by building a
+prototype of NDN-based data center network.  In order to evaluate the
+performance of the prototype, we will provide two specific applications
+supported by the prototype: 1) simple SQL query in a distributed database and 2)
+distributed word occurance analysis.  As we will describe in Section
+\ref{sec:problem_statement}, each application represents a different type of
+distributed data computing: incremental computing and sub-computing
+respectively.  We will also compare the performance of our prototype with the
+existing IP-based solution, Nectar, and try to derive some general conclusions
+which can be used for future data center network designs.
+
+
+
+In data center, the main issue is managing data and computation. With the observation 
+of many intermediate computation results could be shared and reused among many follow-up 
+computation, some systems, like Nectar, designed to provide service to reuse such shared 
+intermediate computation result. However, such design consisting in-compiling program 
+analysis and extra intermediate results managing server faces many by-nature problems such as inflexibility.
+ 
+In this work, we present a new intermediate computation result sharing mechanism based on named data network for data center network. Utilizing the nature of named data network as name flexibility and intermediate router cache, we present our mechanism which:
+  1. Execute program decomposing on demand dynamically and triggered by plaintext name, rather then language specific method.
+  2. Addressing and storing intermediate results decentralized and back to the intermediate result owners to control, following the end-to-end principle
+
+This report describes the design of our system, and the design about data storage problem, 
+implementation and evaluation part are left to the future work.
